@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Peters CW Trainer</title>
+<link rel="stylesheet" href="cw_trainer.css">
+</head>
+<body>
+
+<h1>Peters CW Trainer &nbsp;<button class="mode-btn active" id="btn-mode-key"    onclick="setMode('key')">Key</button><button class="mode-btn" id="btn-mode-listen" onclick="setMode('listen')">Listen</button></h1>
+
+<div id="cat-filter">
+  <label><input type="checkbox" id="cat-de"    checked> Deutsch</label>
+  <label><input type="checkbox" id="cat-en"    checked> English</label>
+  <label><input type="checkbox" id="cat-num"   checked> Numbers</label>
+  <label><input type="checkbox" id="cat-punct" checked> ,.?=</label>
+  <label><input type="checkbox" id="cat-call"  checked> Callsigns</label>
+  <label><input type="checkbox" id="cat-qcode" checked> Q-Codes</label>
+  <label><input type="checkbox" id="cat-rand"  checked> Random &nbsp;Koch Lvl: <input type="number" id="kochLevel" value="40" min="2" max="48" style="width:44px;font-family:monospace;font-size:13px;"></label>
+</div>
+
+<div class="settings">
+  <label>Char (WPM): <input type="number" id="charWpm"   value="12" min="5" max="60"></label>
+  <label>Farnsworth (WPM): <input type="number" id="farnsWpm"  value="12" min="5" max="60"></label>
+  <label>Sidetone (Hz): <input type="number" id="sidetoneHz" value="600" min="200" max="1200"></label>
+</div>
+
+<div id="key-area" tabindex="0">Straight Key &mdash; L-Ctrl &nbsp;/&nbsp; Space &nbsp;/&nbsp; Click</div>
+
+<div id="listen-controls" style="display:none">
+  <button id="listenPlayBtn" style="margin-top:0">&#9654; Play</button>
+  <button id="listenStopBtn" style="display:none;margin-top:0;margin-left:6px">&#9646;&#9646; Stop</button>
+  <button id="listenReplayBtn" style="display:none;margin-top:0;margin-left:6px">&#8635; Replay</button>
+  <input type="text" id="listen-input" placeholder="type what you heard…"
+         autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <button id="listenCheckBtn" style="display:none">Check</button>
+</div>
+
+<div id="diff-area">
+  <div id="diff-soll"></div>
+  <div id="diff-ist"></div>
+</div>
+<div id="stats">Fehler: 0</div>
+<div id="bravo"></div>
+<button id="newTextBtn">New Text</button>
+<span id="hint-key"    style="font-size:11px;color:#888;margin-left:6px;">(or hold key &gt; 0.8 s)</span>
+<span id="hint-listen" style="font-size:11px;color:#888;margin-left:6px;display:none">(Enter: Play &rarr; Check &rarr; Next)</span>
+
+<div id="chart-wrap">
+  <div id="chart-label">Timing &mdash; Expected / Actual</div>
+  <canvas id="timingChart" height="62"></canvas>
+  <div id="wpm-result"></div>
+  <div id="session-stats"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="diff.js"></script>
+<script src="render.js"></script>
+<script src="audio.js"></script>
+<script src="app.js"></script>
+
+<div class="legend">
+  <table>
+    <tr>
+      <td><span class="swatch ✓">abc</span></td>
+      <td>correct</td>
+    </tr>
+    <tr>
+      <td><span class="swatch ⊕">abc</span></td>
+      <td>additional (not in target)</td>
+    </tr>
+    <tr>
+      <td><span class="swatch ✗">abc</span></td>
+      <td>wrong character</td>
+    </tr>
+    <tr>
+      <td><span class="swatch ○">abc</span></td>
+      <td>missing (skipped target character)</td>
+    </tr>
+    <tr>
+      <td><span class="swatch …">abc</span></td>
+      <td>not yet reached</td>
+    </tr>
+  </table>
+</div>
+
+<p style="margin-top:30px; font-size:12px; color:#888;">Made by AI, Claude Sonnet 4.6</p>
+</body>
+</html>

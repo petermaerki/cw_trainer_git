@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>computeDiff Test Suite</title>
+    <style>
+        body {
+            font-family: monospace;
+            font-size: 14px;
+            max-width: 980px;
+            margin: 20px auto;
+            padding: 0 12px;
+        }
+
+        h1 {
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        #summary {
+            font-weight: bold;
+            margin-bottom: 14px;
+        }
+
+        .test-card {
+            margin-bottom: 14px;
+        }
+
+        .test-title {
+            font-weight: bold;
+            margin: 0 0 4px;
+        }
+
+        .test-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .test-table td {
+            border: 1px solid #ccc;
+            padding: 6px 8px;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .test-table td:nth-child(2),
+        .test-table td:nth-child(3) {
+            font-family: "Courier New", Courier, monospace;
+            font-variant-ligatures: none;
+        }
+
+        .k {
+            width: 110px;
+            background: #f3f3f3;
+            font-weight: bold;
+        }
+
+        .test-table tr.pass {
+            background: #e7f8e7;
+        }
+
+        .test-table tr.fail {
+            background: #fdeaea;
+        }
+
+        .mono {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .render-cell {
+            min-width: 260px;
+            white-space: pre;
+        }
+
+        .✓ {
+            color: black;
+            background: lightgreen;
+            border-radius: 2px;
+        }
+
+        .⊕ {
+            color: black;
+            background: lightblue;
+            border-radius: 2px;
+        }
+
+        .✗ {
+            color: black;
+            background: lightsalmon;
+            border-radius: 2px;
+        }
+
+        .○ {
+            color: black;
+            background: #ccc;
+            border-radius: 2px;
+        }
+
+        .… {
+            color: gray;
+            background: #e8e8e8;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>computeDiff Test Suite</h1>
+    <div id="summary"></div>
+    <div id="results"></div>
+
+    <script src="render.js"></script>
+    <script src="diff.js"></script>
+    <script>
+        const tests = [
+
+            // Single-marker focused
+            { target: 'abc', actual: 'ABC', expected: '✓abc', expected_error: 0 },
+            { target: '', actual: 'ABC', expected: '⊕abc', expected_error: 3 },
+            { target: 'abc', actual: 'XYZ', expected: '✗xyz', expected_error: 3 },
+            { target: 'ab', actual: 'B', expected: '○a✓b', expected_error: 1 },
+            { target: 'ab', actual: 'A', expected: '✓a…b', expected_error: 0 },
+
+            // Pair / triple combinations
+            { target: 'ab', actual: 'AXB', expected: '✓a⊕x✓b', expected_error: 1 },
+            { target: 'ab', actual: 'AC', expected: '✓a✗c', expected_error: 1 },
+            { target: 'abc', actual: 'AC', expected: '✓a○b✓c', expected_error: 1 },
+            { target: 'abc', actual: 'AB', expected: '✓ab…c', expected_error: 0 },
+            { target: 'abc', actual: 'ACX', expected: '✓a○b✓c⊕x', expected_error: 2 },
+            { target: 'ab', actual: 'XYB', expected: '✗x⊕y✓b', expected_error: 2 },
+            { target: 'abc', actual: 'DC', expected: '✗d○b✓c', expected_error: 2 },
+            { target: 'abcd', actual: 'ABYD', expected: '✓ab✗y✓d', expected_error: 1 },
+            { target: 'abcd', actual: 'ABX', expected: '✓ab✗x…d', expected_error: 1 },
+
+            // Original short-form example
+            { target: 'aa', actual: 'AA', expected: '✓aa', expected_error: 0 },
+            { target: 'aa', actual: 'AAA', expected: '✓aa⊕a', expected_error: 1 },
+            { target: 'aa', actual: 'A', expected: '✓a…a', expected_error: 0 },
+            { target: 'A A A A', actual: 'A A ', expected: '✓A A …A A', expected_error: 0 },
+            { target: 'aaabbb', actual: 'ABABBB', expected: '✓a✗b✓abbb', expected_error: 1 },
+            // Original long-form example
+            {
+                target: 'Ein schoener Tag',
+                actual: 'EIXN SCHENER R',
+                expected: '✓Ei⊕x✓n sch○o✓ener ✗R…ag',
+                expected_error: 3
+            }
+        ];
+
+        function runTests() {
+            const results = document.getElementById('results');
+            const summary = document.getElementById('summary');
+
+            let passCount = 0;
+
+            tests.forEach((t, idx) => {
+                const received = computeDiff(t.target, t.actual);
+                const ok = received.tagged === t.expected && received.error === t.expected_error;
+                if (ok) passCount++;
+
+                const card = document.createElement('section');
+                card.className = 'test-card';
+                const resultRenderId = 'result-render-' + idx;
+                const expectedRenderId = 'expected-render-' + idx;
+                card.innerHTML = [
+                    '<div class="test-title">Test #' + (idx + 1) + '</div>',
+                    '<table class="test-table">',
+                    '  <tr><td class="k">target</td><td class="mono">' + escapeHtml(t.target) + '</td><td></td></tr>',
+                    '  <tr><td class="k">actual</td><td class="mono">' + escapeHtml(t.actual) + '</td><td></td></tr>',
+                    '  <tr><td class="k">result.tagged</td><td class="mono">' + escapeHtml(received.tagged) + '</td><td class="render-cell" id="' + resultRenderId + '"></td></tr>',
+                    '  <tr><td class="k">expected.tagged</td><td class="mono">' + escapeHtml(t.expected) + '</td><td class="render-cell" id="' + expectedRenderId + '"></td></tr>',
+                    '  <tr><td class="k">result.error</td><td class="mono">' + escapeHtml(received.error) + '</td><td></td></tr>',
+                    '  <tr><td class="k">expected.error</td><td class="mono">' + escapeHtml(t.expected_error) + '</td><td></td></tr>',
+                    '  <tr class="' + (ok ? 'pass' : 'fail') + '"><td class="k">status</td><td>' + (ok ? 'PASS' : 'FAIL') + '</td><td></td></tr>',
+                    '</table>'
+                ].join('');
+
+                results.appendChild(card);
+
+                renderActualFromTaggedString(received.tagged, document.getElementById(resultRenderId));
+                renderActualFromTaggedString(t.expected, document.getElementById(expectedRenderId));
+            });
+
+            summary.textContent = passCount + '/' + tests.length + ' tests passed';
+            summary.style.color = passCount === tests.length ? '#0a7d0a' : '#c00000';
+        }
+
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        runTests();
+    </script>
+</body>
+
+</html>
