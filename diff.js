@@ -59,7 +59,7 @@ function computeDiff(target, actual) {
     j--;
   }
 
-  // Main backtrack from (bestI, j) with priority: Match > Delete(○) > Insert(⊕) > Replace(✗)
+  // Main backtrack from (bestI, j)
   let i = bestI;
 
   while (i > 0 || j > 0) {
