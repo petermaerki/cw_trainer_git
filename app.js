@@ -37,6 +37,7 @@ let chartZoom = 1.0, chartPanX = 0;
 let sentenceDeck = [];   // verbleibende Satz-Indices (gemischter Stapel)
 
 const RAND_IDX = -1;
+const CALL_IDX = -2;
 let kochLevel = 40;
 
 function randSentence() {
@@ -58,17 +59,20 @@ function getActiveCats() {
   if (document.getElementById('cat-num').checked)   cats.push('num');
   if (document.getElementById('cat-punct').checked) cats.push('punct');
   if (document.getElementById('cat-call').checked)  cats.push('call');
-  if (document.getElementById('cat-qcode').checked) cats.push('qcode');
-  if (document.getElementById('cat-rand').checked)  cats.push('rand');
+  if (document.getElementById('cat-qcode').checked)   cats.push('qcode');
+  if (document.getElementById('cat-prosign').checked) cats.push('prosign');
+  if (document.getElementById('cat-rand').checked)    cats.push('rand');
   return cats;
 }
 
 function refillDeck() {
   const cats = getActiveCats();
-  const regularCats = cats.filter(c => c !== 'rand');
+  const regularCats = cats.filter(c => c !== 'rand' && c !== 'call');
   const pool = [];
   if (regularCats.length > 0)
     SENTENCES.forEach((s, i) => { if (regularCats.includes(s.c)) pool.push(i); });
+  if (cats.includes('call'))
+    for (let i = 0; i < 30; i++) pool.push(CALL_IDX);
   if (cats.includes('rand'))
     for (let i = 0; i < 20; i++) pool.push(RAND_IDX);
   sentenceDeck = (pool.length > 0 ? pool : SENTENCES.map((_, i) => i)).slice();
@@ -178,6 +182,14 @@ function renderDiff() {
 /*  Vergleich und Anzeige                                              */
 /* ------------------------------------------------------------------ */
 function addChar(ch) {
+  if (ch === '<HH>') {
+    // Korrekturprosign: trailing Spaces überspringen, dann letzten Buchstaben löschen
+    while (decoded.length > 0 && decoded[decoded.length - 1].type === 'space') decoded.pop();
+    if (decoded.length > 0) decoded.pop();
+    renderDiff();
+    updateStats();
+    return;
+  }
   if (isDone) {
     if (ch.toUpperCase() === 'K') { newText(); return; }
   }
@@ -257,7 +269,16 @@ function newText() {
 
   if (sentenceDeck.length === 0) refillDeck();
   const _idx = sentenceDeck.pop();
-  const s = (_idx === RAND_IDX) ? randSentence() : SENTENCES[_idx].s;
+  let s;
+  if (_idx === RAND_IDX) {
+    s = randSentence();
+  } else if (_idx === CALL_IDX) {
+    const call = generateCallsign();
+    const reps = 1 + Math.floor(Math.random() * 2);
+    s = Array(reps).fill(call).join(' ');
+  } else {
+    s = SENTENCES[_idx].s.replace(/\{CALL\}/g, generateCallsign);
+  }
   targetText  = s;
   targetChars = s.replace(/\s+/g, '').split('');
   renderDiff();
