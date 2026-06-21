@@ -26,10 +26,15 @@
 </div>
 
 <div class="settings">
-  <label>Char (WPM) <input type="number" id="charWpm"   value="12" min="5" max="60"></label>
+  <span class="pair">
+    <label>Char (WPM) <input type="number" id="charWpm"   value="12" min="5" max="60"></label>
+    <label>± <input type="number" id="charVariation" value="2" min="0" max="20"></label>
+  </span>
   <label>Farnsworth (WPM) <input type="number" id="farnsWpm"  value="12" min="5" max="60"></label>
-  <label>Sidetone (Hz) <input type="number" id="sidetoneHz" value="600" min="200" max="1200"></label>
-  <label>+- <input type="number" id="sidetoneVariation" value="100" min="0" max="500"></label>
+  <span class="pair">
+    <label>Sidetone (Hz) <input type="number" id="sidetoneHz" value="600" min="200" max="1200"></label>
+    <label>± <input type="number" id="sidetoneVariation" value="100" min="0" max="500"></label>
+  </span>
 </div>
 
 <div id="key-area" tabindex="0">Straight Key &mdash; L-Ctrl &nbsp;/&nbsp; Space &nbsp;/&nbsp; Click</div>

@@ -10,8 +10,9 @@ body {
   margin: 0 auto;
 }
 h1 { font-size: 16px; font-weight: bold; margin-bottom: 14px; }
-.settings { margin-bottom: 12px; }
-.settings label { margin-right: 8px; font-size: 14px; }
+.settings { margin-bottom: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.settings label { margin-right: 0; font-size: 14px; white-space: nowrap; }
+.settings .pair { display: inline-flex; align-items: center; gap: 2px; }
 .settings input[type=number] { width: 3.2em; }
 input[type=number] { width: 58px; font-family: monospace; font-size: 14px; }
 #key-area {

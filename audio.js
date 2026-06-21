@@ -73,7 +73,8 @@ function playMorseText(onDone) {
   gain2.gain.setValueAtTime(0, startT);        // Gain explizit auf 0
   listenOsc = osc2;
 
-  const dit       = ditMs()  / 1000;
+  const variedWpm  = charWpm + (Math.random() * 2 * char_variation_plus_minus_wpm - char_variation_plus_minus_wpm);
+  const dit       = (1200 / Math.max(5, variedWpm)) / 1000;
   const dah       = 3 * dit;
   const intra     = dit;
   const charGapT  = 3 * fditMs() / 1000;

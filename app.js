@@ -2,6 +2,7 @@
 /*  Einstellungen                                                      */
 /* ------------------------------------------------------------------ */
 let charWpm    = 12;
+let char_variation_plus_minus_wpm = 2;
 let farnsWpm   = 12;
 let sideToneHz = 600;
 let sidetone_variation_plus_minus_hz = 100;
@@ -487,6 +488,10 @@ document.addEventListener('mouseup', () => {
 document.getElementById('charWpm').addEventListener('change', e => {
   const v = parseInt(e.target.value, 10);
   if (v >= 5 && v <= 60) charWpm = v;
+});
+document.getElementById('charVariation').addEventListener('change', e => {
+  const v = parseInt(e.target.value, 10);
+  if (v >= 0 && v <= 20) char_variation_plus_minus_wpm = v;
 });
 document.getElementById('farnsWpm').addEventListener('change', e => {
   const v = parseInt(e.target.value, 10);
