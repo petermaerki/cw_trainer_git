@@ -11,20 +11,25 @@
 <h1>Peters CW Trainer &nbsp;<button class="mode-btn active" id="btn-mode-key"    onclick="setMode('key')">Key</button><button class="mode-btn" id="btn-mode-listen" onclick="setMode('listen')">Listen</button></h1>
 
 <div id="cat-filter">
-  <label><input type="checkbox" id="cat-de"    checked> Deutsch</label>
-  <label><input type="checkbox" id="cat-en"    checked> English</label>
-  <label><input type="checkbox" id="cat-num"   checked> Numbers</label>
+  <label><input type="checkbox" id="cat-de"    checked> DE</label>
+  <label><input type="checkbox" id="cat-en"    checked> EN</label>
+  <label><input type="checkbox" id="cat-num"   checked> 123</label>
   <label><input type="checkbox" id="cat-punct" checked> ,.?=</label>
-  <label><input type="checkbox" id="cat-call"  checked> Callsigns</label>
+  <label><input type="checkbox" id="cat-call"  checked> Calls</label>
   <label><input type="checkbox" id="cat-qcode" checked> Q-Codes</label>
-  <label><input type="checkbox" id="cat-prosign"> Prosigns &nbsp;<span style="font-family:monospace;font-size:11px;color:#888;"><span title="&lt;AR&gt; — end of transmission (.-.-.)" >+&lt;AR&gt;</span> &nbsp; <span title="&lt;BT&gt; — separator / new section (-...-)">= &lt;BT&gt;</span> &nbsp; <span title="&lt;KN&gt; — go ahead, specific station only (-.--.)">(&lt;KN&gt;</span> &nbsp; <span title="&lt;AS&gt; — wait / stand by (.-...)">&amp;&lt;AS&gt;</span> &nbsp; <span title="&lt;SK&gt; — end of contact (..-.-)">~&lt;SK&gt;</span></span></label>
-  <label><input type="checkbox" id="cat-rand"  checked> Random &nbsp;Koch Lvl: <input type="number" id="kochLevel" value="40" min="2" max="48" style="width:44px;font-family:monospace;font-size:13px;"></label>
+  <label><span title="end of transmission (.-.-.)" ><input type="checkbox" id="ps-ar"> +&lt;AR&gt;</span></label>
+  <label><span title="separator / new section (-...-)"><input type="checkbox" id="ps-bt"> =&lt;BT&gt;</span></label>
+  <label><span title="go ahead, specific station only (-.--.)" ><input type="checkbox" id="ps-kn"> (&lt;KN&gt;</span></label>
+  <label><span title="wait / stand by (.-...)"><input type="checkbox" id="ps-as"> &amp;&lt;AS&gt;</span></label>
+  <label><span title="end of contact (..-.-.)"><input type="checkbox" id="ps-sk"> ~&lt;SK&gt;</span></label>
+  <label><input type="checkbox" id="cat-rand"  checked> Random &nbsp;Koch Lvl <input type="number" id="kochLevel" value="40" min="2" max="48" style="width:44px;font-family:monospace;font-size:13px;"></label>
 </div>
 
 <div class="settings">
-  <label>Char (WPM): <input type="number" id="charWpm"   value="12" min="5" max="60"></label>
-  <label>Farnsworth (WPM): <input type="number" id="farnsWpm"  value="12" min="5" max="60"></label>
-  <label>Sidetone (Hz): <input type="number" id="sidetoneHz" value="600" min="200" max="1200"></label>
+  <label>Char (WPM) <input type="number" id="charWpm"   value="12" min="5" max="60"></label>
+  <label>Farnsworth (WPM) <input type="number" id="farnsWpm"  value="12" min="5" max="60"></label>
+  <label>Sidetone (Hz) <input type="number" id="sidetoneHz" value="600" min="200" max="1200"></label>
+  <label>+- <input type="number" id="sidetoneVariation" value="100" min="0" max="500"></label>
 </div>
 
 <div id="key-area" tabindex="0">Straight Key &mdash; L-Ctrl &nbsp;/&nbsp; Space &nbsp;/&nbsp; Click</div>

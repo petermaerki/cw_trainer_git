@@ -67,7 +67,7 @@ function playMorseText(onDone) {
   const gain2 = audioCtx.createGain();
   osc2.connect(gain2);
   gain2.connect(audioCtx.destination);
-  osc2.frequency.value = sideToneHz;
+  osc2.frequency.value = sideToneHz + (Math.random() * 2 * sidetone_variation_plus_minus_hz - sidetone_variation_plus_minus_hz);
   osc2.type = 'sine';
   const startT = audioCtx.currentTime;
   gain2.gain.setValueAtTime(0, startT);        // Gain explizit auf 0

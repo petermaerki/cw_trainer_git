@@ -4,6 +4,7 @@
 let charWpm    = 12;
 let farnsWpm   = 12;
 let sideToneHz = 600;
+let sidetone_variation_plus_minus_hz = 100;
 
 /* ------------------------------------------------------------------ */
 /*  Timing-Hilfsfunktionen                                             */
@@ -59,18 +60,32 @@ function getActiveCats() {
   if (document.getElementById('cat-num').checked)   cats.push('num');
   if (document.getElementById('cat-punct').checked) cats.push('punct');
   if (document.getElementById('cat-call').checked)  cats.push('call');
-  if (document.getElementById('cat-qcode').checked)   cats.push('qcode');
-  if (document.getElementById('cat-prosign').checked) cats.push('prosign');
-  if (document.getElementById('cat-rand').checked)    cats.push('rand');
+  if (document.getElementById('cat-qcode').checked) cats.push('qcode');
+  if (document.getElementById('cat-rand').checked)  cats.push('rand');
   return cats;
+}
+
+function getActiveProsigns() {
+  const ps = [];
+  if (document.getElementById('ps-ar').checked) ps.push('ar');
+  if (document.getElementById('ps-bt').checked) ps.push('bt');
+  if (document.getElementById('ps-kn').checked) ps.push('kn');
+  if (document.getElementById('ps-as').checked) ps.push('as');
+  if (document.getElementById('ps-sk').checked) ps.push('sk');
+  return ps;
 }
 
 function refillDeck() {
   const cats = getActiveCats();
+  const activeProsigns = getActiveProsigns();
   const regularCats = cats.filter(c => c !== 'rand' && c !== 'call');
   const pool = [];
   if (regularCats.length > 0)
     SENTENCES.forEach((s, i) => { if (regularCats.includes(s.c)) pool.push(i); });
+  if (activeProsigns.length > 0)
+    SENTENCES.forEach((s, i) => {
+      if (s.c === 'prosign' && s.p && s.p.some(p => activeProsigns.includes(p))) pool.push(i);
+    });
   if (cats.includes('call'))
     for (let i = 0; i < 30; i++) pool.push(CALL_IDX);
   if (cats.includes('rand'))
@@ -161,6 +176,11 @@ function finalizeWord() {
 
 /* computeDiff → see diff.js */
 
+function prosignDisplay(s) {
+  return s.replace(/\+/g, '<AR>').replace(/=/g, '<BT>').replace(/\(/g, '<KN>')
+           .replace(/&/g, '<AS>').replace(/~/g, '<SK>');
+}
+
 function renderDiff() {
   const actualText = decoded.map(item => item.type === 'space' ? ' ' : item.ch).join('');
   const diff = computeDiff(targetText, actualText);
@@ -169,7 +189,7 @@ function renderDiff() {
 
   // Soll: Zieltext direkt (im Listen-Modus erst nach dem Check anzeigen)
   document.getElementById('diff-soll').textContent =
-    (appMode === 'listen' && !isDone) ? '' : targetText;
+    (appMode === 'listen' && !isDone) ? '' : prosignDisplay(targetText);
 
   if (appMode === 'listen' && !isDone) {
     diffIstEl.replaceChildren();
@@ -476,6 +496,10 @@ document.getElementById('sidetoneHz').addEventListener('change', e => {
   const v = parseInt(e.target.value, 10);
   if (v >= 200 && v <= 1200) sideToneHz = v;
 });
+document.getElementById('sidetoneVariation').addEventListener('change', e => {
+  const v = parseInt(e.target.value, 10);
+  if (v >= 0 && v <= 500) sidetone_variation_plus_minus_hz = v;
+});
 
 /* ------------------------------------------------------------------ */
 /*  Tastatureingabe  (L-Ctrl / R-Ctrl / Leertaste)                    */
@@ -523,7 +547,8 @@ document.getElementById('kochLevel').addEventListener('change', e => {
   if (v >= 2 && v <= 48) kochLevel = v;
 });
 
-['cat-de','cat-en','cat-num','cat-punct','cat-call','cat-qcode','cat-rand'].forEach(id => {
+['cat-de','cat-en','cat-num','cat-punct','cat-call','cat-qcode','cat-rand',
+ 'ps-ar','ps-bt','ps-kn','ps-as','ps-sk'].forEach(id => {
   document.getElementById(id).addEventListener('change', () => {
     refillDeck();
   });
